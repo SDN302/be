@@ -437,6 +437,7 @@ graph LR
 |---|---|
 | `yarn dev` | Start dev server with nodemon (auto-reload) |
 | `yarn start` | Start production server with PM2 |
+| `yarn seed` | Clear database and insert sample users, contacts, tags, and interactions |
 | `yarn test` | Run all tests |
 | `yarn test:watch` | Run tests in watch mode |
 | `yarn coverage` | Generate test coverage report |
