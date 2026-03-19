@@ -39,6 +39,24 @@ components:
         refresh:
           $ref: '#/components/schemas/Token'
 
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+          pattern: '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+        user:
+          type: string
+      example:
+        id: 65f0f15e32a1012f6810a2cd
+        name: important
+        color: '#ff6b35'
+        user: 65f0f13a32a1012f6810a2cc
+
     Error:
       type: object
       properties:
@@ -57,6 +75,15 @@ components:
           example:
             code: 400
             message: Email already taken
+    DuplicateTag:
+      description: Tag already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Tag already exists
     Unauthorized:
       description: Unauthorized
       content:

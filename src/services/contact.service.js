@@ -2,6 +2,19 @@ const httpStatus = require('http-status');
 const { Contact } = require('../models');
 const ApiError = require('../utils/ApiError');
 
+const buildTagsFilter = (tags) => {
+    if (!tags) {
+        return {};
+    }
+
+    const tagIds = Array.isArray(tags) ? tags : tags.split(',').map((tag) => tag.trim());
+    if (tagIds.length === 1) {
+        return { tags: tagIds[0] };
+    }
+
+    return { tags: { $in: tagIds } };
+};
+
 /**
  * Create a contact
  * @param {ObjectId} userId - Owner's user id
@@ -24,7 +37,8 @@ const createContact = async (userId, contactBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryContacts = async (userId, filter, options) => {
-    const contacts = await Contact.paginate({ ...filter, owner: userId }, options);
+    const { tags, ...restFilter } = filter;
+    const contacts = await Contact.paginate({ ...restFilter, ...buildTagsFilter(tags), owner: userId }, options);
     return contacts;
 };
 

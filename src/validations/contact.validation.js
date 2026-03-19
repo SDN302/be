@@ -28,6 +28,11 @@ const getContacts = {
         lastName: Joi.string(),
         organization: Joi.string(),
         status: Joi.string().valid('lead', 'active', 'inactive', 'warm', 'cold'),
+        tags: Joi.alternatives().try(
+            Joi.string().custom(objectId),
+            Joi.array().items(Joi.string().custom(objectId)).min(1),
+            Joi.string().pattern(/^([0-9a-fA-F]{24})(,[0-9a-fA-F]{24})+$/)
+        ),
         sortBy: Joi.string(),
         limit: Joi.number().integer(),
         page: Joi.number().integer(),

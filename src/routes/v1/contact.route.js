@@ -17,22 +17,6 @@ router
     .patch(auth(), validate(contactValidation.updateContact), contactController.updateContact)
     .delete(auth(), validate(contactValidation.deleteContact), contactController.deleteContact);
 
-router
-    .route('/:contactId/methods')
-    .post(auth(), validate(contactValidation.addContactMethod), contactController.addContactMethod);
-
-router
-    .route('/:contactId/methods/:methodId')
-    .delete(auth(), validate(contactValidation.removeContactMethod), contactController.removeContactMethod);
-
-router
-    .route('/:contactId/tags')
-    .post(auth(), validate(contactValidation.addTags), contactController.addTags);
-
-router
-    .route('/:contactId/tags/:tagId')
-    .delete(auth(), validate(contactValidation.removeTag), contactController.removeTag);
-
 module.exports = router;
 
 /**
@@ -146,6 +130,15 @@ module.exports = router;
  *           type: string
  *           enum: [lead, active, inactive, warm, cold]
  *         description: Filter by status
+ *       - in: query
+ *         name: tags
+ *         schema:
+ *           oneOf:
+ *             - type: string
+ *               description: Single tag id
+ *             - type: string
+ *               description: Comma-separated tag ids
+ *         description: Filter contacts by one or more tag ids
  *       - in: query
  *         name: sortBy
  *         schema:
