@@ -62,6 +62,9 @@ module.exports = router;
  *               birthday:
  *                 type: string
  *                 format: date
+ *               referralContactId:
+ *                 type: string
+ *                 description: Existing contact id that referred this contact
  *               contactMethods:
  *                 type: array
  *                 items:
@@ -87,6 +90,7 @@ module.exports = router;
  *               organization: Acme Inc
  *               jobTitle: Developer
  *               status: active
+ *               referralContactId: 60d5ec49b784e34d8c8f8f8f
  *               contactMethods:
  *                 - type: email
  *                   value: john@example.com
@@ -130,6 +134,11 @@ module.exports = router;
  *           type: string
  *           enum: [lead, active, inactive, warm, cold]
  *         description: Filter by status
+ *       - in: query
+ *         name: referralContactId
+ *         schema:
+ *           type: string
+ *         description: Filter by referrer contact id
  *       - in: query
  *         name: tags
  *         schema:
@@ -251,9 +260,13 @@ module.exports = router;
  *               birthday:
  *                 type: string
  *                 format: date
+ *               referralContactId:
+ *                 type: string
+ *                 nullable: true
  *             example:
  *               firstName: Jane
  *               organization: New Company
+ *               referralContactId: 60d5ec49b784e34d8c8f8f8f
  *     responses:
  *       "200":
  *         description: OK

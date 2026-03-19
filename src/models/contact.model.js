@@ -63,6 +63,11 @@ const contactSchema = mongoose.Schema(
             type: Date,
         },
         contactMethods: [contactMethodSchema],
+        referralContactId: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Contact',
+            default: null,
+        },
         tags: [
             {
                 type: mongoose.SchemaTypes.ObjectId,
@@ -74,6 +79,8 @@ const contactSchema = mongoose.Schema(
         timestamps: true,
     }
 );
+
+contactSchema.index({ owner: 1, referralContactId: 1 });
 
 // add plugin that converts mongoose to json
 contactSchema.plugin(toJSON);

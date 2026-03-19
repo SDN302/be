@@ -10,7 +10,7 @@ const createContact = catchAsync(async (req, res) => {
 });
 
 const getContacts = catchAsync(async (req, res) => {
-    const filter = pick(req.query, ['firstName', 'lastName', 'organization', 'status', 'tags']);
+    const filter = pick(req.query, ['firstName', 'lastName', 'organization', 'status', 'tags', 'referralContactId']);
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await contactService.queryContacts(req.user.id, filter, options);
     res.send(result);

@@ -15,6 +15,45 @@ const buildTagsFilter = (tags) => {
     return { tags: { $in: tagIds } };
 };
 
+const validateReferralContact = async (userId, referralContactId, currentContactId = null) => {
+    if (!referralContactId) {
+        return;
+    }
+
+    if (currentContactId && referralContactId.toString() === currentContactId.toString()) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'A contact cannot refer itself');
+    }
+
+    const referralContact = await Contact.findOne({ _id: referralContactId, owner: userId }).select('_id referralContactId');
+    if (!referralContact) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Referral contact not found');
+    }
+
+    if (!currentContactId) {
+        return;
+    }
+
+    const visited = new Set([referralContact._id.toString()]);
+    let cursor = referralContact;
+    while (cursor.referralContactId) {
+        const parentId = cursor.referralContactId.toString();
+
+        if (parentId === currentContactId.toString()) {
+            throw new ApiError(httpStatus.BAD_REQUEST, 'Circular referral relationship is not allowed');
+        }
+
+        if (visited.has(parentId)) {
+            break;
+        }
+
+        visited.add(parentId);
+        cursor = await Contact.findOne({ _id: parentId, owner: userId }).select('_id referralContactId');
+        if (!cursor) {
+            break;
+        }
+    }
+};
+
 /**
  * Create a contact
  * @param {ObjectId} userId - Owner's user id
@@ -22,6 +61,7 @@ const buildTagsFilter = (tags) => {
  * @returns {Promise<Contact>}
  */
 const createContact = async (userId, contactBody) => {
+    await validateReferralContact(userId, contactBody.referralContactId);
     return Contact.create({ ...contactBody, owner: userId });
 };
 
@@ -64,6 +104,11 @@ const updateContactById = async (contactId, userId, updateBody) => {
     if (!contact) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Contact not found');
     }
+
+    if (Object.prototype.hasOwnProperty.call(updateBody, 'referralContactId') && updateBody.referralContactId !== null) {
+        await validateReferralContact(userId, updateBody.referralContactId, contact._id);
+    }
+
     Object.assign(contact, updateBody);
     await contact.save();
     return contact;

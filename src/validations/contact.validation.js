@@ -18,6 +18,7 @@ const createContact = {
         lastContacted: Joi.date(),
         birthday: Joi.date(),
         contactMethods: Joi.array().items(contactMethodSchema),
+        referralContactId: Joi.string().custom(objectId),
         tags: Joi.array().items(Joi.string().custom(objectId)),
     }),
 };
@@ -28,6 +29,7 @@ const getContacts = {
         lastName: Joi.string(),
         organization: Joi.string(),
         status: Joi.string().valid('lead', 'active', 'inactive', 'warm', 'cold'),
+        referralContactId: Joi.string().custom(objectId),
         tags: Joi.alternatives().try(
             Joi.string().custom(objectId),
             Joi.array().items(Joi.string().custom(objectId)).min(1),
@@ -59,6 +61,7 @@ const updateContact = {
             status: Joi.string().valid('lead', 'active', 'inactive', 'warm', 'cold'),
             lastContacted: Joi.date(),
             birthday: Joi.date().allow(null),
+            referralContactId: Joi.alternatives().try(Joi.string().custom(objectId), Joi.valid(null)),
             contactMethods: Joi.array().items(contactMethodSchema),
             tags: Joi.array().items(Joi.string().custom(objectId)),
         })
